@@ -20,13 +20,13 @@ module Api
       # POST /api/v1/projects
       def create
         @project = Project.create!(project_params)
-        render :show, status: :created
+        render json: @project, status: :created
       end
 
       # PATCH/PUT /api/v1/projects/1
       def update
         @project.update!(project_params)
-        render :show, status: :ok
+        render json: @project, status: :ok
       end
 
       # DELETE /api/v1/projects/1

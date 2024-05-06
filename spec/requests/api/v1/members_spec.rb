@@ -123,6 +123,36 @@ RSpec.describe '/members', type: :request do
     end
   end
 
+  describe 'PATCH /update_team' do
+    context 'with valid parameters' do
+      let(:new_team) { create(:team) }
+      let(:new_attributes) do
+        { team_id: new_team.id }
+      end
+
+      it 'updates the team of the requested member' do
+        patch api_v1_member_url(member),
+              params: new_attributes, headers: valid_headers, as: :json
+        member.reload
+        expect(member.team).to eql(new_team)
+      end
+
+      it 'renders a JSON response with the member' do
+        patch api_v1_member_url(member),
+              params: new_attributes, headers: valid_headers, as: :json
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'with invalid parameters' do
+      it 'renders a JSON response with errors for the member' do
+        patch api_v1_member_url(member),
+              params: invalid_attributes, headers: valid_headers, as: :json
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
+
   describe 'DELETE /destroy' do
     it 'destroys the requested member' do
       expect do

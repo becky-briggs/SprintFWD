@@ -3,7 +3,7 @@
 module Api
   module V1
     class MembersController < ApplicationController
-      before_action :set_member, only: %i[show update destroy]
+      before_action :set_member, only: %i[show update update_team destroy]
 
       # GET /api/v1/members
       def index
@@ -29,6 +29,12 @@ module Api
         render json: @member, status: :ok
       end
 
+      # PATCH /api/v1/members/1/update_team
+      def update_team
+        @member.update!(team_id: update_team_params['team_id'])
+        render json: @member, status: :ok
+      end
+
       # DELETE /api/v1/members/1
       def destroy
         @member.destroy!
@@ -45,6 +51,10 @@ module Api
       # Only allow a list of trusted parameters through.
       def member_params
         params.permit(:first_name, :last_name, :city, :state, :country, :team_id)
+      end
+
+      def update_team_params
+        params.permit(:team_id)
       end
     end
   end

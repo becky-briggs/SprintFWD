@@ -4,7 +4,10 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :projects
-      resources :members
+      # resources :members
+      resources :members do
+        patch 'update_team', on: :member
+      end
       resources :teams
     end
   end
