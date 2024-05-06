@@ -119,4 +119,36 @@ RSpec.describe '/projects', type: :request do
       end.to change(Project, :count).by(-1)
     end
   end
+
+  describe 'POST /add_member' do
+    context 'with a valid new project member' do
+      let(:member) { create(:member) }
+      let(:add_member_attributes) do
+        { member_id: member.id }
+      end
+
+      it 'adds the member to the requested project' do
+        expect do
+          post add_member_api_v1_project_url(project), params: add_member_attributes, headers: valid_headers, as: :json
+        end.to change(project.members, :count).by(1)
+      end
+    end
+
+    context 'with an existing project member' do
+      let(:member) { create(:member) }
+      let(:add_member_attributes) do
+        { member_id: member.id }
+      end
+
+      before do
+        project.members << member
+      end
+
+      it 'does not duplicate the member to the requested project' do
+        expect do
+          post add_member_api_v1_project_url(project), params: add_member_attributes, headers: valid_headers, as: :json
+        end.to change(project.members, :count).by(0)
+      end
+    end
+  end
 end

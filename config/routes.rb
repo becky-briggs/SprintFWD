@@ -3,7 +3,9 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      resources :projects
+      resources :projects do
+        post 'add_member', on: :member
+      end
       resources :members do
         patch 'update_team', on: :member
       end
