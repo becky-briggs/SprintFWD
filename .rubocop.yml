@@ -11,3 +11,6 @@ Documentation:
 
 MultipleMemoizedHelpers:
   Enabled: false
+
+HasAndBelongsToMany:
+  Enabled: false

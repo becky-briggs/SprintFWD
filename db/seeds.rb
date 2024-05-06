@@ -10,10 +10,12 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-# Seeding teams and associated members
+# Clearing the database
 Member.destroy_all
 Team.destroy_all
+Project.destroy_all
 
+# Seeding teams and associated members
 10.times do
   @team = Team.create!(name: Faker::Company.department)
 
@@ -31,3 +33,22 @@ end
 
 Rails.logger.info "Created #{Team.count} teams"
 Rails.logger.info "Created #{Member.count} members"
+
+# Seeding projects
+10.times do
+  @project = Project.create!(name: Faker::Commerce.product_name)
+end
+
+Rails.logger.info "Created #{Project.count} projects"
+
+# Assign members to projects
+def assign_members_to_project(project, members)
+  project.members << members
+  project.save
+
+  Rails.logger.info "Assigned #{project.members.count} members to #{project.name} project"
+end
+
+assign_members_to_project(Project.first, Member.first(2))
+assign_members_to_project(Project.second, Member.last(3))
+assign_members_to_project(Project.third, Member.fourth)

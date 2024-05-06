@@ -11,6 +11,20 @@ RSpec.describe Member, type: :model do
     it 'belongs to a team' do
       expect(member.team).to eql(team)
     end
+
+    context 'with associated projects' do
+      let!(:member) { create(:member, :with_projects) }
+
+      it 'can have many projects' do
+        expect(member.projects.count).to eq(2)
+      end
+    end
+
+    context 'with no associated projects' do
+      it 'can have no projects' do
+        expect(member.projects.count).to eq(0)
+      end
+    end
   end
 
   # validation tests
