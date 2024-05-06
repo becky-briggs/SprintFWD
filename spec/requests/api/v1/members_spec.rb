@@ -77,6 +77,21 @@ RSpec.describe '/members', type: :request do
         expect(results.count).to eq(team.members.count)
       end
     end
+
+    context 'when accessed nested under projects' do
+      let(:project) { create(:project, :with_members) }
+
+      it 'renders a successful response' do
+        get api_v1_project_members_url(project), headers: valid_headers, as: :json
+        expect(response).to be_successful
+      end
+
+      it 'only returns records for given team' do
+        get api_v1_project_members_url(project), headers: valid_headers, as: :json
+        results = JSON.parse(response.body)
+        expect(results.count).to eq(project.members.count)
+      end
+    end
   end
 
   describe 'GET /show' do

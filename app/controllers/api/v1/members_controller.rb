@@ -9,6 +9,8 @@ module Api
       def index
         @members = if params[:team_id]
                      Team.find_by(id: params[:team_id]).members
+                   elsif params[:project_id]
+                     Project.find_by(id: params[:project_id]).members
                    else
                      Member.all
                    end
@@ -54,7 +56,7 @@ module Api
 
       # Only allow a list of trusted parameters through.
       def member_params
-        params.permit(:first_name, :last_name, :city, :state, :country, :team_id)
+        params.permit(:first_name, :last_name, :city, :state, :country, :team_id, :project_id)
       end
 
       def update_team_params
