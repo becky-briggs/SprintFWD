@@ -14,68 +14,79 @@ require 'rails_helper'
 # of tools you can use to make these specs even more expressive, but we're
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
-RSpec.describe '/teams', type: :request do
+RSpec.describe '/members', type: :request do
   # This should return the minimal set of attributes required to create a valid
-  # Team. As you add validations to Team, be sure to
+  # Member. As you add validations to Member, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) do
-    { name: 'Team A' }
+    { first_name: 'John',
+      last_name: 'Smith',
+      city: 'New York',
+      state: 'New York',
+      country: 'United States',
+      team_id: team.id }
   end
 
   let(:invalid_attributes) do
-    { name: nil }
+    { first_name: 'John',
+      last_name: 'Smith',
+      city: 'New York',
+      state: 'New York',
+      country: 'United States',
+      team_id: nil }
   end
 
   # This should return the minimal set of values that should be in the headers
   # in order to pass any filters (e.g. authentication) defined in
-  # Api::V1::TeamsController, or in your router and rack
+  # Api::V1::MembersController, or in your router and rack
   # middleware. Be sure to keep this updated too.
   let(:valid_headers) do
     {}
   end
 
-  let!(:team) { create(:team, valid_attributes) }
+  let(:team) { create(:team) }
+  let!(:member) { create(:member, valid_attributes) }
 
   describe 'GET /index' do
     it 'renders a successful response' do
-      get api_v1_teams_url, headers: valid_headers, as: :json
+      get api_v1_members_url, headers: valid_headers, as: :json
       expect(response).to be_successful
     end
   end
 
   describe 'GET /show' do
     it 'renders a successful response' do
-      get api_v1_team_url(team), as: :json
+      get api_v1_member_url(member), as: :json
       expect(response).to be_successful
     end
   end
 
   describe 'POST /create' do
     context 'with valid parameters' do
-      it 'creates a new Team' do
+      it 'creates a new Member' do
         expect do
-          post api_v1_teams_url,
+          post api_v1_members_url,
                params: valid_attributes, headers: valid_headers, as: :json
-        end.to change(Team, :count).by(1)
+        end.to change(Member, :count).by(1)
       end
 
-      it 'renders a JSON response with the new team' do
-        post api_v1_teams_url,
+      it 'renders a JSON response with the new member' do
+        post api_v1_members_url,
              params: valid_attributes, headers: valid_headers, as: :json
         expect(response).to have_http_status(:created)
       end
     end
 
     context 'with invalid parameters' do
-      it 'does not create a new Team' do
+      it 'does not create a new Member' do
         expect do
-          post api_v1_teams_url,
+          post api_v1_members_url,
                params: invalid_attributes, as: :json
-        end.to change(Team, :count).by(0)
+        end.to change(Member, :count).by(0)
       end
 
-      it 'renders a JSON response with errors for the new team' do
-        post api_v1_teams_url,
+      it 'renders a JSON response with errors for the new member' do
+        post api_v1_members_url,
              params: invalid_attributes, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
       end
@@ -84,28 +95,28 @@ RSpec.describe '/teams', type: :request do
 
   describe 'PATCH /update' do
     context 'with valid parameters' do
-      new_name = 'Team B'
+      new_first_name = 'Jane'
       let(:new_attributes) do
-        { name: new_name }
+        { first_name: new_first_name }
       end
 
-      it 'updates the requested team' do
-        patch api_v1_team_url(team),
+      it 'updates the requested member' do
+        patch api_v1_member_url(member),
               params: new_attributes, headers: valid_headers, as: :json
-        team.reload
-        expect(team.name).to eql(new_name)
+        member.reload
+        expect(member.first_name).to eql(new_first_name)
       end
 
-      it 'renders a JSON response with the team' do
-        patch api_v1_team_url(team),
+      it 'renders a JSON response with the member' do
+        patch api_v1_member_url(member),
               params: new_attributes, headers: valid_headers, as: :json
         expect(response).to have_http_status(:ok)
       end
     end
 
     context 'with invalid parameters' do
-      it 'renders a JSON response with errors for the team' do
-        patch api_v1_team_url(team),
+      it 'renders a JSON response with errors for the member' do
+        patch api_v1_member_url(member),
               params: invalid_attributes, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
       end
@@ -113,30 +124,10 @@ RSpec.describe '/teams', type: :request do
   end
 
   describe 'DELETE /destroy' do
-    context 'with no associated members' do
-      it 'destroys the requested team' do
-        expect do
-          delete api_v1_team_url(team), headers: valid_headers, as: :json
-        end.to change(Team, :count).by(-1)
-      end
-    end
-
-    context 'with associated members' do
-      before do
-        create(:member, team:)
-      end
-
-      it 'does not destroy the requested team' do
-        expect do
-          delete api_v1_team_url(team), headers: valid_headers, as: :json
-        end.to change(Team, :count).by(0)
-      end
-
-      it 'returns an error' do
-        delete api_v1_team_url(team), headers: valid_headers, as: :json
-
-        expect(response.body).to include('Cannot delete record because dependent members exist')
-      end
+    it 'destroys the requested member' do
+      expect do
+        delete api_v1_member_url(member), headers: valid_headers, as: :json
+      end.to change(Member, :count).by(-1)
     end
   end
 end

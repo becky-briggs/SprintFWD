@@ -8,3 +8,6 @@ require:
 
 Documentation:
   Enabled: false
+
+MultipleMemoizedHelpers:
+  Enabled: false
