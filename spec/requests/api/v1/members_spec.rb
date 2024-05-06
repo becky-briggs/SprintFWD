@@ -48,9 +48,34 @@ RSpec.describe '/members', type: :request do
   let!(:member) { create(:member, valid_attributes) }
 
   describe 'GET /index' do
-    it 'renders a successful response' do
-      get api_v1_members_url, headers: valid_headers, as: :json
-      expect(response).to be_successful
+    before do
+      create_list(:member, 2)
+    end
+
+    context 'when accessed at the root level' do
+      it 'renders a successful response' do
+        get api_v1_members_url, headers: valid_headers, as: :json
+        expect(response).to be_successful
+      end
+
+      it 'returns all records' do
+        get api_v1_members_url, headers: valid_headers, as: :json
+        results = JSON.parse(response.body)
+        expect(results.count).to eq(Member.count)
+      end
+    end
+
+    context 'when accessed nested under teams' do
+      it 'renders a successful response' do
+        get api_v1_team_members_url(team), headers: valid_headers, as: :json
+        expect(response).to be_successful
+      end
+
+      it 'only returns records for given team' do
+        get api_v1_team_members_url(team), headers: valid_headers, as: :json
+        results = JSON.parse(response.body)
+        expect(results.count).to eq(team.members.count)
+      end
     end
   end
 

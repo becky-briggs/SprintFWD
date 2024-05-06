@@ -7,7 +7,11 @@ module Api
 
       # GET /api/v1/members
       def index
-        @members = Member.all
+        @members = if params[:team_id]
+                     Team.find_by(id: params[:team_id]).members
+                   else
+                     Member.all
+                   end
 
         render json: @members
       end
@@ -31,7 +35,7 @@ module Api
 
       # PATCH /api/v1/members/1/update_team
       def update_team
-        @member.update!(team_id: update_team_params['team_id'])
+        @member.update!(team_id: update_team_params[:team_id])
         render json: @member, status: :ok
       end
 
